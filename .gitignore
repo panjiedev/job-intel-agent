@@ -17,8 +17,6 @@ build/
 *.swp
 *.swo
 
-# SQLite 数据库文件
-*.db
 
 # 系统文件
 .DS_Store

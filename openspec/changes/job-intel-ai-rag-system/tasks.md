@@ -13,11 +13,11 @@
 
 ## 3. 面向业务链的 RAG 开发
 
-- [ ] 3.1 开发 `/api/jobs/import` 接口：接收前端传来的 Excel 字典隐射并做 pydantic 校验和落库，同时调用 Embedding API 存储文本词距。
-- [ ] 3.2 开发 `/api/resume/upload` 接口：接收 Markdown 或 TXT 提取全文转存为用户 Profile 并向量化。
-- [ ] 3.3 开发职位匹配端点：使用用户简历的 Embedding 在 `pgvector` 中通过余弦相似度算出 Top 5 职位。
-- [ ] 3.4 串联匹配分析 Prompt，流式（Streaming）返回匹配劣势及规划。
-- [ ] 3.5 编写涵盖 Excel 读取、相似度比对、以及利用 pytest-mock 切断 LangChain 的本地断言与测试。
+- [x] 3.1 开发 `/api/jobs/import` 接口：接收前端传来的 Excel 字典隐射并做 pydantic 校验和落库，同时调用 Embedding API 存储文本词距。
+- [x] 3.2 开发 `/api/resume/upload` 接口：接收 Markdown 或 TXT 提取全文转存为用户 Profile 并向量化。
+- [x] 3.3 开发职位匹配端点：使用用户简历的 Embedding 在 `pgvector` 中通过余弦相似度算出 Top 5 职位。
+- [x] 3.4 串联匹配分析 Prompt，流式（Streaming）返回匹配劣势及规划。
+- [x] 3.5 编写涵盖 Excel 读取、相似度比对、以及利用 pytest-mock 切断 LangChain 的本地断言与测试。
 
 ## 4. 前端应用重构 (Next.js)
 

@@ -43,3 +43,5 @@ embeddings = OpenAIEmbeddings(
 def health_check(db: Session = Depends(get_db)):
     """健康检查"""
     return {"status": "ok"}
+from job_intel_agent.api.routers import api_router
+app.include_router(api_router)

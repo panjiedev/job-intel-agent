@@ -21,8 +21,8 @@
 
 ## 4. 前端应用重构 (Next.js)
 
-- [ ] 4.1 在项目根目录使用 `npx create-next-app` 生成一个新的 web 工程（含 Tailwind/Typescript）。
-- [ ] 4.2 引入 `ai` (Vercel AI SDK) 及 `lucide-react`。开发基础的 Layout 和路由体系。
-- [ ] 4.3 实现职位批量导入的数据表格 Mapping UI。
-- [ ] 4.4 实现简历上传页以及“结果看板”。呈现从后端返回的流式 Markdown 格式分析报告。
-- [ ] 4.5 与本地 Docker 启动的后端接口联调。
+- [x] 4.1 在项目根目录使用 `npx create-next-app` 生成一个新的 web 工程（含 Tailwind/Typescript）。
+- [x] 4.2 引入 `ai` (Vercel AI SDK) 及 `lucide-react`。开发基础的 Layout 和路由体系。
+- [x] 4.3 实现职位批量导入的数据表格 Mapping UI。
+- [x] 4.4 实现简历上传页以及“结果看板”。呈现从后端返回的流式 Markdown 格式分析报告。
+- [x] 4.5 与本地 Docker 启动的后端接口联调。

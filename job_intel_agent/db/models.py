@@ -1,35 +1,36 @@
-"""数据模型定义"""
-from dataclasses import dataclass
-from typing import Optional
+from sqlalchemy import Column, Integer, String, Text, DateTime, func
+from .database import Base
 
+try:
+    from pgvector.sqlalchemy import Vector
+    HAS_PGVECTOR = True
+except ImportError:
+    HAS_PGVECTOR = False
 
-@dataclass
-class Job:
-    """职位信息模型"""
-    id: Optional[int] = None
-    job_name: str = ""
-    salary_desc: Optional[str] = None
-    post_description: Optional[str] = None
-    work_address: Optional[str] = None
-    show_skills: Optional[str] = None
-    experience_name: Optional[str] = None
-    degree_name: Optional[str] = None
-    position_name: Optional[str] = None
+class Job(Base):
+    __tablename__ = "job"
+    id = Column(Integer, primary_key=True, index=True)
+    job_name = Column(String(255), nullable=False)
+    salary_desc = Column(String(255))
+    post_description = Column(Text)
+    work_address = Column(String(255))
+    show_skills = Column(String(255))
+    experience_name = Column(String(100))
+    degree_name = Column(String(100))
+    position_name = Column(String(255))
+    
+    # 增加 pgvector 支持
+    if HAS_PGVECTOR:
+        embedding = Column(Vector(1536))
 
-    @classmethod
-    def from_row(cls, row) -> "Job":
-        """从数据库行转换为 Job 对象"""
-        if row is None:
-            return None
-        return cls(
-            id=row["id"],
-            job_name=row["job_name"],
-            salary_desc=row["salary_desc"],
-            post_description=row["post_description"],
-            work_address=row["work_address"],
-            show_skills=row["show_skills"],
-            experience_name=row["experience_name"],
-            degree_name=row["degree_name"],
-            position_name=row["position_name"],
-        )
-
+class Resume(Base):
+    __tablename__ = "resume"
+    id = Column(Integer, primary_key=True, index=True)
+    user_name = Column(String(255))
+    raw_content = Column(Text)
+    core_skills = Column(Text)
+    expected_position = Column(String(255))
+    created_at = Column(DateTime, server_default=func.now())
+    
+    if HAS_PGVECTOR:
+        embedding = Column(Vector(1536))

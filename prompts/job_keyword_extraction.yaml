@@ -1,0 +1,14 @@
+name: "job_keyword_extraction"
+description: "提取一批目标岗位的共性技能词汇汇聚。"
+model: "qwen-plus"
+prompt: >
+  你是一个高级职业规划咨询师。这是一批关于 "{keyword}" 的岗位描述。
+  请根据这段描述，提炼出最关键的 10 个高频硬核技能，并用结构化的格式输出。
+  
+  === 岗位批量描述 ===
+  {jd_descriptions}
+  ===
+  
+  输出格式（只允许包含纯 Markdown 无前后缀文字）：
+  - 技能1: 解释与占比...
+  - ...

@@ -45,7 +45,7 @@ export default function ImportJobsPage() {
 
     return (
         <div className="max-w-4xl bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Job Batch Import (Excel -&gt; PGVector)</h2>
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">职位批量分析与入库 (Excel -&gt; PGVector)</h2>
 
             <div className="space-y-6">
                 <div>

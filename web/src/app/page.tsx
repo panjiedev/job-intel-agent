@@ -26,7 +26,7 @@ export default function Home() {
             动态映射不同表头的 Excel，批量生成文本向量（Embeddings）并存入关系型库。
           </p>
           <Link href="/jobs/import" className="text-indigo-600 font-medium hover:text-indigo-800 flex items-center gap-1">
-            Go to Import <span aria-hidden="true">&rarr;</span>
+            前往批量录入 <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
 
@@ -39,7 +39,7 @@ export default function Home() {
             采用 text-embedding-v3 技术，在海量岗位中进行简历相似度余弦检测匹配。
           </p>
           <Link href="/resume" className="text-emerald-600 font-medium hover:text-emerald-800 flex items-center gap-1">
-            Start Analysis <span aria-hidden="true">&rarr;</span>
+            开始特征分析 <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
 
@@ -51,7 +51,7 @@ export default function Home() {
           <p className="text-gray-500 text-sm mb-6">
             由大语言模型反推提炼指定岗群落的技能共性，帮助候选人绘制缺口雷达。
           </p>
-          <span className="text-gray-400 font-medium cursor-not-allowed">Coming Next</span>
+          <span className="text-gray-400 font-medium cursor-not-allowed">敬请期待 (持续迭代)</span>
         </div>
 
       </div>

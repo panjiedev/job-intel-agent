@@ -51,7 +51,7 @@ export default function ResumePage() {
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col">
                 <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-indigo-500" />
-                    Upload Resume (MD/TXT)
+                    上传求职简历 (MD/TXT)
                 </h2>
 
                 <input
@@ -71,7 +71,7 @@ export default function ResumePage() {
                     disabled={!file || loading}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg w-full transition disabled:opacity-50"
                 >
-                    {loading ? "RAG Vector Extracting..." : "Upload & Analyze Resume"}
+                    {loading ? "RAG 特征向量抽取中..." : "上传并解析简历"}
                 </button>
 
                 {resumeExtract && (
@@ -86,7 +86,7 @@ export default function ResumePage() {
                             disabled={matchLoading}
                             className="mt-4 flex justify-center items-center gap-2 bg-gray-900 text-white w-full rounded py-2 hover:bg-gray-800 transition"
                         >
-                            {matchLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "开始从职位库 (Job Library) RAG 匹配"}
+                            {matchLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "开始从职位库产生最佳 RAG 匹配"}
                         </button>
                     </div>
                 )}
@@ -94,7 +94,7 @@ export default function ResumePage() {
 
             {/* 匹配结果展示板 */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-auto">
-                <h2 className="text-xl font-bold mb-6 text-gray-800">Job RAG Matches Top 5</h2>
+                <h2 className="text-xl font-bold mb-6 text-gray-800">Job RAG 最优推荐匹配 (Top 5)</h2>
 
                 {matchedJobs.length > 0 ? (
                     <div className="space-y-4">

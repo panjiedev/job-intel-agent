@@ -14,14 +14,14 @@ class Job(Base):
     salary_desc = Column(String(255))
     post_description = Column(Text)
     work_address = Column(String(255))
-    show_skills = Column(String(255))
+    show_skills = Column(Text)
     experience_name = Column(String(100))
     degree_name = Column(String(100))
     position_name = Column(String(255))
     
     # 增加 pgvector 支持
     if HAS_PGVECTOR:
-        embedding = Column(Vector(1536))
+        embedding = Column(Vector(1024))
 
 class Resume(Base):
     __tablename__ = "resume"
@@ -29,8 +29,8 @@ class Resume(Base):
     user_name = Column(String(255))
     raw_content = Column(Text)
     core_skills = Column(Text)
-    expected_position = Column(String(255))
+    expected_position = Column(Text)
     created_at = Column(DateTime, server_default=func.now())
     
     if HAS_PGVECTOR:
-        embedding = Column(Vector(1536))
+        embedding = Column(Vector(1024))

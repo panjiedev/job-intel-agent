@@ -2,44 +2,53 @@
 
 import { useState } from 'react'
 import axios from 'axios'
-import { CheckCircle, AlertCircle, RefreshCw } from 'lucide-react'
+import { CheckCircle, AlertCircle, RefreshCw, Loader2 } from 'lucide-react'
 
 export default function ResumePage() {
     const [file, setFile] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
     const [resumeExtract, setResumeExtract] = useState<any>(null)
+    const [uploadError, setUploadError] = useState<string | null>(null)
 
     const [matchLoading, setMatchLoading] = useState(false)
     const [matchedJobs, setMatchedJobs] = useState<any[]>([])
+    const [matchError, setMatchError] = useState<string | null>(null)
 
     const handleUploadResume = async () => {
-        if (!file) return alert("请先选择以.txt或.md结尾的简历文件")
+        if (!file) return
         setLoading(true)
+        setUploadError(null)
+        setResumeExtract(null)
         try {
             const formData = new FormData()
             formData.append("file", file)
 
             const { data } = await axios.post("http://localhost:8000/api/resume/upload", formData, {
-                headers: { "Content-Type": "multipart/form-data" }
+                headers: { "Content-Type": "multipart/form-data" },
+                timeout: 120000 // 2分钟超时，LLM 调用可能较慢
             })
-            alert("上传与标签化成功")
             setResumeExtract({ id: data.resume_id, content: data.extracted })
 
         } catch (e: any) {
-            alert("解析失败: " + e.message)
+            const msg = e.response?.data?.detail || e.message || "未知错误"
+            setUploadError(`解析失败: ${msg}`)
         } finally {
             setLoading(false)
         }
     }
 
     const handleMatch = async () => {
-        if (!resumeExtract) return alert("请先上传简历提取特征")
+        if (!resumeExtract) return
         setMatchLoading(true)
+        setMatchError(null)
         try {
-            const res = await axios.get(`http://localhost:8000/api/resume/match/${resumeExtract.id}?top_k=5`)
+            const res = await axios.get(`http://localhost:8000/api/resume/match/${resumeExtract.id}?top_k=5`, {
+                timeout: 30000
+            })
             setMatchedJobs(res.data)
         } catch (e: any) {
-            alert("匹配错误: " + e.message)
+            const msg = e.response?.data?.detail || e.message || "未知错误"
+            setMatchError(`匹配错误: ${msg}`)
         } finally {
             setMatchLoading(false)
         }
@@ -57,7 +66,7 @@ export default function ResumePage() {
                 <input
                     type="file"
                     accept=".txt,.md"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    onChange={(e) => { setFile(e.target.files?.[0] || null); setUploadError(null); setResumeExtract(null); }}
                     className="mb-4 block w-full text-sm text-gray-500
             file:mr-4 file:py-2 file:px-4
             file:rounded-md file:border-0
@@ -69,15 +78,24 @@ export default function ResumePage() {
                 <button
                     onClick={handleUploadResume}
                     disabled={!file || loading}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg w-full transition disabled:opacity-50"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg w-full transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                    {loading ? "RAG 特征向量抽取中..." : "上传并解析简历"}
+                    {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {loading ? "AI 正在分析简历（预计 10~30 秒）..." : "上传并解析简历"}
                 </button>
 
+                {/* 上传错误提示 */}
+                {uploadError && (
+                    <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200 text-sm">
+                        ⚠️ {uploadError}
+                    </div>
+                )}
+
+                {/* 核心特征提取结果 */}
                 {resumeExtract && (
-                    <div className="mt-8 p-4 bg-gray-50 border border-indigo-100 rounded-lg">
-                        <h4 className="font-semibold text-gray-700 text-sm flex items-center gap-1"><CheckCircle className="w-4 h-4 text-green-500" /> 核心特征提取</h4>
-                        <p className="whitespace-pre-wrap mt-2 text-sm text-gray-600 font-mono bg-white p-3 rounded">
+                    <div className="mt-6 p-4 bg-gray-50 border border-indigo-100 rounded-lg">
+                        <h4 className="font-semibold text-gray-700 text-sm flex items-center gap-1"><CheckCircle className="w-4 h-4 text-green-500" /> 核心特征提取完成</h4>
+                        <p className="whitespace-pre-wrap mt-2 text-sm text-gray-600 font-mono bg-white p-3 rounded border">
                             {resumeExtract.content}
                         </p>
 
@@ -86,8 +104,15 @@ export default function ResumePage() {
                             disabled={matchLoading}
                             className="mt-4 flex justify-center items-center gap-2 bg-gray-900 text-white w-full rounded py-2 hover:bg-gray-800 transition"
                         >
-                            {matchLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "开始从职位库产生最佳 RAG 匹配"}
+                            {matchLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : null}
+                            {matchLoading ? "正在从职位库检索中..." : "开始从职位库产生最佳 RAG 匹配"}
                         </button>
+
+                        {matchError && (
+                            <div className="mt-3 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200 text-sm">
+                                ⚠️ {matchError}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -102,7 +127,7 @@ export default function ResumePage() {
                             <div key={job.id} className="p-4 rounded-xl border border-gray-200 shadow-sm hover:border-indigo-300 transition-colors">
                                 <h3 className="font-bold flex justify-between">
                                     <span className="text-gray-800">{i + 1}. {job.job_name}</span>
-                                    <span className="text-xs font-mono bg-indigo-50 text-indigo-700 px-2 py-1 rounded">Score: 匹配度极高</span>
+                                    <span className="text-xs font-mono bg-indigo-50 text-indigo-700 px-2 py-1 rounded">匹配度极高</span>
                                 </h3>
                                 <div className="text-sm mt-2 text-gray-600">
                                     <strong>核心技能: </strong> {job.skills || "未提取"}

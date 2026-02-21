@@ -43,8 +43,9 @@ async def import_jobs_from_excel(
 
     inserted_count = 0
     
-    # 延迟加载避免循环依赖 或 初始化太早
-    from main import embeddings
+    from main import embeddings, logger
+    
+    logger.info(f"开始处理 Excel 职位导入. 文件名: {file.filename}, 匹配列: {list(mapping.keys())}")
     
     for _, row in df.iterrows():
         job_data = {}
@@ -60,9 +61,10 @@ async def import_jobs_from_excel(
         new_job = Job(**job_data)
         
         # 如果包含描述，则同步获取 embedding (实际生产中可以采用后台任务 background_tasks)
-        if new_job.post_description:
+        desc = new_job.post_description
+        if desc and isinstance(desc, str) and desc.strip():
             try:
-                 emb_vector = embeddings.embed_query(new_job.post_description)
+                 emb_vector = embeddings.embed_query(desc.strip())
                  new_job.embedding = emb_vector
             except Exception as e:
                  print(f"Warning: Failed to generate embedding for {new_job.job_name}: {e}")
@@ -71,5 +73,6 @@ async def import_jobs_from_excel(
         inserted_count += 1
         
     db.commit()
+    logger.info(f"Excel 导入完成. 共成功入库 {inserted_count} 条数据 (Postgres/PGVector)")
     
     return {"status": "success", "inserted": inserted_count}

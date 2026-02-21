@@ -17,14 +17,22 @@ async def upload_resume(file: UploadFile = File(...), db: Session = Depends(get_
     content = await file.read()
     text = content.decode("utf-8")
     
-    from main import embeddings, llm
+    from main import embeddings, llm, logger
+    from job_intel_agent.utils.prompt_manager import prompt_manager
     
-    # 抽取核心意图或求职期望进行打标
-    sys_msg = SystemMessage(content="提取这份简历的最核心求职意向（不多于10个字），以及列举不超过5个最熟悉的硬性技术技能，并以纯文本格式输出：求职期望：[...]\n核心技能：[...]")
-    hum_msg = HumanMessage(content=text)
+    # 使用模板管理器加载 Prompt
+    prompt_tpl = prompt_manager.load_template("resume_extraction")
+    final_prompt = prompt_tpl.format(resume_text=text)
+    
+    logger.info(f"发送简历解析请求到 LLM. Prompt 长度: {len(final_prompt)}")
+    logger.debug(f"完整 Prompt 内容: {final_prompt}")
+
     try:
-        core_info = llm.invoke([sys_msg, hum_msg]).content
+        response = llm.invoke(final_prompt)
+        core_info = response.content
+        logger.info(f"LLM 解析成功. 返回字符数: {len(core_info)}")
     except Exception as e:
+        logger.error(f"LLM 解析失败: {str(e)}")
         core_info = "LLM提取失败"
         
     # 计算简历全文 Embeddings
